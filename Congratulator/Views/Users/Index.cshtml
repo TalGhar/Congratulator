@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Congratulator.Models.UserDbModel>
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+@foreach (var user in Model)
+{
+    <div class="card">
+        <img class="card-img-top" src="@Url.Action("Image", "ControllerName", new { id = user.Id })" alt="@user.Name">
+        <div class="card-body">
+            <h5 class="card-title">@user.Name @user.Surname</h5>
+            <p class="card-text">BirthDate: @user.BDate.ToShortDateString()</p>
+            <a href="@Url.Action("Edit", "ControllerName", new { id = user.Id })" class="btn btn-primary">Edit</a>
+            <a href="@Url.Action("Details", "ControllerName", new { id = user.Id })" class="btn btn-primary">Details</a>
+            <a href="@Url.Action("Delete", "ControllerName", new { id = user.Id })" class="btn btn-danger">Delete</a>
+        </div>
+    </div>
+}
+
+@*<div class="jumbotron">
+    <p><a asp-action="Create">Create New</a></p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@Html.ActionLink("Name",       "Index", new { sort = ViewBag.NameSortParm })</th>
+                <th>@Html.ActionLink("Surname", "Index", new { sort = ViewBag.SurnameSortParm })</th>
+                <th>@Html.ActionLink("BDate",        "Index", new { sort = ViewBag.BDateSortParm })</th>
+                <th>@Html.ActionLink("Avatar",      "Index", new { sort = ViewBag.AvatarSortParm })</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Surname)</td>
+                    <td>@Html.DisplayFor(modelItem => item.BDate)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Avatar)</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div>@Html.ActionLink("Download JSON", "GetJSON", new { sort = @ViewData["sortJSON"] }, new { target="_blank" })</div>
+</div>*@
