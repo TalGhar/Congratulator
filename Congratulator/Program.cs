@@ -20,7 +20,6 @@ namespace Congratulator
             {
                 var services = scope.ServiceProvider;
 
-                // Create the database (if it does not already exist)
                 try
                 {
                     var context = services.GetRequiredService<UserDbContext>();

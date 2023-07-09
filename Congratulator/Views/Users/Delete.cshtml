@@ -1,0 +1,28 @@
+﻿@model Congratulator.Models.UserDbModel;
+
+@{
+    ViewData["Title"] = "Удалить пользователя";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card mb-4">
+                <img src="~/images/@Html.DisplayFor(model => model.Avatar)" class="card-img-top" alt="avatar">
+                <div class="card-body">
+                    <h5 class="card-title">@Html.DisplayFor(model => model.Name) @Html.DisplayFor(model => model.Name)</h5>
+                    <p class="card-text">@Html.DisplayFor(model => model.BDate)</p>
+
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-formaction="Id">
+                        <div class="form-group">
+                            <label>Вы уверены, что хотите удалить пользователя?</label>
+                        </div>
+                        <button type="submit" class="btn btn-danger" value="Delete">Удалить</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

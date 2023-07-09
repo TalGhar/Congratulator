@@ -59,7 +59,7 @@ namespace Congratulator
             app.UseStaticFiles();
 
             // Register routes
-            app.UseMvc(routes => routes.MapRoute(name: "default", template: "{controller=Users}/{action=Index}/{id?}"));
+            app.UseMvc(routes => routes.MapRoute(name: "default", template: "{controller=Users}/{action=Near}/{id?}"));
         }
     }
 }

@@ -4,13 +4,13 @@
     ViewData["Title"] = "Ближайшие дни рождения";
 }
 <div class="container">
+
     <div>
         <h4>Сортировка</h4>
-        @Html.ActionLink("Имя", "Index", new { sort = ViewBag.NameSortParm })
-        @Html.ActionLink("Фамилия", "Index", new { sort = ViewBag.SurnameSortParm })
-        @Html.ActionLink("Дата рождения", "Index", new { sort = ViewBag.BDateSortParm })
+        @Html.ActionLink("Имя", "Near", new { sort = ViewBag.NameSortParm })
+        @Html.ActionLink("Фамилия", "Near", new { sort = ViewBag.SurnameSortParm })
+        @Html.ActionLink("Дата рождения", "Near", new { sort = ViewBag.BDateSortParm })
     </div>
-
 
     <div class="row">
 

@@ -1,10 +1,11 @@
-﻿@model Congratulator.Models.User;
+﻿@model Congratulator.Models.UserDbModel;
 
 @{
     ViewData["Title"] = "Добавить пользователя";
 }
 
-<form method="post" asp-action="Create" enctype="multipart/form-data">
+<form asp-action="Edit" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
     <div class="form-group mb-2">
         <label asp-for="Name">Имя</label>
         <input asp-for="Name" type="text" class="form-control">
@@ -21,5 +22,5 @@
         <label asp-for="Avatar">Фотография</label>
         <input asp-for="Avatar" id="image" type="file" class="form-control-file">
     </div>
-    <button type="submit" class="btn btn-primary">Добавить</button>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
 </form>

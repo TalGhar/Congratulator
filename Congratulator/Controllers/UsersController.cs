@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Congratulator.Models;
+using Microsoft.Extensions.Hosting.Internal;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Congratulator.Controllers
 {
@@ -25,17 +27,39 @@ namespace Congratulator.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Surname,BDate,Avatar")] Models.User newUser)
+        public async Task<IActionResult> Create(Models.User newUser, IFormFile Avatar)
         {
 
-            var user = new Models.UserDbModel(newUser);
+            if (newUser.Name != null && newUser.Surname != null)
+            {
+                if (Avatar != null)
+                {
 
-            this.context.Add(user);
+                    var fileName = Avatar.FileName;
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+                    newUser.Avatar = fileName;
 
-            await this.context.SaveChangesAsync();
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await Avatar.CopyToAsync(stream);
+                    }
+
+                }
+                else
+                {
+                    newUser.Avatar = "empty.png";
+                }
+
+
+                var user = new Models.UserDbModel(newUser);
+
+                this.context.Add(user);
+
+                await this.context.SaveChangesAsync();
+
+            }
 
             return RedirectToAction(nameof(Index));
-
         }
 
         [HttpGet]
@@ -93,24 +117,30 @@ namespace Congratulator.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,Surname,Bdate,Avatar")] Models.UserDbModel task)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,Surname,Bdate,Avatar")] Models.UserDbModel user, IFormFile Avatar)
         {
-            if (id != task.Id)
+            if (id != user.Id)
                 return NotFound();
 
-            if (!this.context.Users.Any(t => t.Id == id))
+            if (!this.context.Users.Any(u => u.Id == id))
                 return NotFound();
 
-            if (ModelState.IsValid)
+
+            if (Avatar != null)
             {
-                this.context.Update(task);
-
-                await this.context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                user.Avatar = Avatar.FileName;
+            }
+            else
+            {
+                user.Avatar = "empty.png";
             }
 
-            return View(task);
+            this.context.Update(user);
+
+            await this.context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+
         }
 
         [HttpGet]
@@ -119,17 +149,38 @@ namespace Congratulator.Controllers
             ViewBag.NameSortParm = (sort == "Name" ? "Name_desc" : "Name");
             ViewBag.SurnameSortParm = (sort == "Surname" ? "Surname_desc" : "Surname");
             ViewBag.BDateSortParm = (sort == "BDate" ? "BDate_desc" : "BDate");
-            ViewBag.AvatarSortParm = (sort == "Avatar" ? "Avatar_desc" : "Avatar");
-
-            ViewData["sortJSON"] = sort;
 
             return View(await this.GetSorted(sort).ToListAsync());
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetJSON(string sort)
+        public async Task<IActionResult> Near(string sort)
         {
-            return Json(await this.GetSorted(sort).ToListAsync());
+            ViewBag.NameSortParm = (sort == "Name" ? "Name_desc" : "Name");
+            ViewBag.SurnameSortParm = (sort == "Surname" ? "Surname_desc" : "Surname");
+            ViewBag.BDateSortParm = (sort == "BDate" ? "BDate_desc" : "BDate");
+
+            return View(await this.GetNear(sort).ToListAsync());
+        }
+
+        private IQueryable<Models.UserDbModel> GetNear(string sort)
+        {
+            var today = DateTime.Today;
+            var week = today.AddDays(7);
+            var users = context.Users.Where(u => u.BDate.DayOfYear >= today.DayOfYear && u.BDate.DayOfYear <= week.DayOfYear);
+
+            users = sort switch
+            {
+                "Name" => users.OrderBy(s => s.Name),
+                "Name_desc" => users.OrderByDescending(s => s.Name),
+                "Surname" => users.OrderBy(s => s.Surname),
+                "Surname_desc" => users.OrderByDescending(s => s.Surname),
+                "BDate" => users.OrderBy(s => s.BDate),
+                "BDate_desc" => users.OrderByDescending(s => s.BDate),
+                _ => users.OrderBy(s => s.Name),
+            };
+
+            return users;
         }
 
         private IQueryable<Models.UserDbModel> GetSorted(string sort)
@@ -144,8 +195,6 @@ namespace Congratulator.Controllers
                 "Surname_desc" => users.OrderByDescending(s => s.Surname),
                 "BDate" => users.OrderBy(s => s.BDate),
                 "BDate_desc" => users.OrderByDescending(s => s.BDate),
-                "Avatar" => users.OrderBy(s => s.Avatar),
-                "Avatar_desc" => users.OrderByDescending(s => s.Avatar),
                 _ => users.OrderBy(s => s.Name),
             };
 

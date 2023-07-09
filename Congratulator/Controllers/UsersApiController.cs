@@ -46,7 +46,7 @@ namespace Congratulator.Controllers
             this.context.Add(user);
             this.context.SaveChanges();
 
-            return CreatedAtRoute("GetTask", new { id = user.Id }, user);
+            return CreatedAtRoute("GetUser", new { id = user.Id }, user);
         }
 
 
