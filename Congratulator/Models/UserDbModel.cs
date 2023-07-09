@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Congratulator.Models
@@ -12,7 +9,7 @@ namespace Congratulator.Models
 
         public UserDbModel(User user)
         {
-            this.Update(user);
+            Update(user);
         }
 
         [Key]
@@ -21,10 +18,10 @@ namespace Congratulator.Models
 
         public void Update(User user)
         {
-            this.Name = user.Name;
-            this.Surname = user.Surname;
-            this.BDate = user.BDate;
-            this.Avatar = user.Avatar;
+            Name = user.Name;
+            Surname = user.Surname;
+            BDate = user.BDate;
+            Avatar = user.Avatar;
         }
     }
 }

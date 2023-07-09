@@ -1,13 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Congratulator.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Congratulator.Models;
-using Microsoft.Extensions.Hosting.Internal;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
 
 namespace Congratulator.Controllers
 {
@@ -50,12 +44,11 @@ namespace Congratulator.Controllers
                     newUser.Avatar = "empty.png";
                 }
 
-
                 var user = new Models.UserDbModel(newUser);
 
-                this.context.Add(user);
+                context.Add(user);
 
-                await this.context.SaveChangesAsync();
+                await context.SaveChangesAsync();
 
             }
 
@@ -68,7 +61,7 @@ namespace Congratulator.Controllers
             if (string.IsNullOrWhiteSpace(id))
                 return NotFound();
 
-            var user = await this.context.Users.SingleOrDefaultAsync(user => user.Id == id);
+            var user = await context.Users.SingleOrDefaultAsync(user => user.Id == id);
 
             if (user == null)
                 return NotFound();
@@ -82,7 +75,7 @@ namespace Congratulator.Controllers
             if (string.IsNullOrWhiteSpace(id))
                 return NotFound();
 
-            var user = await this.context.Users.SingleOrDefaultAsync(user => user.Id == id);
+            var user = await context.Users.SingleOrDefaultAsync(user => user.Id == id);
 
             if (user == null)
                 return NotFound();
@@ -93,11 +86,11 @@ namespace Congratulator.Controllers
         [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var user = await this.context.Users.SingleOrDefaultAsync(user => user.Id == id);
+            var user = await context.Users.SingleOrDefaultAsync(user => user.Id == id);
 
-            this.context.Users.Remove(user);
+            context.Users.Remove(user);
 
-            await this.context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
@@ -108,7 +101,7 @@ namespace Congratulator.Controllers
             if (string.IsNullOrWhiteSpace(id))
                 return NotFound();
 
-            var user = await this.context.Users.SingleOrDefaultAsync(user => user.Id == id);
+            var user = await context.Users.SingleOrDefaultAsync(user => user.Id == id);
 
             if (user == null)
                 return NotFound();
@@ -122,9 +115,8 @@ namespace Congratulator.Controllers
             if (id != user.Id)
                 return NotFound();
 
-            if (!this.context.Users.Any(u => u.Id == id))
+            if (!context.Users.Any(u => u.Id == id))
                 return NotFound();
-
 
             if (Avatar != null)
             {
@@ -135,9 +127,9 @@ namespace Congratulator.Controllers
                 user.Avatar = "empty.png";
             }
 
-            this.context.Update(user);
+            context.Update(user);
 
-            await this.context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
 
@@ -150,7 +142,7 @@ namespace Congratulator.Controllers
             ViewBag.SurnameSortParm = (sort == "Surname" ? "Surname_desc" : "Surname");
             ViewBag.BDateSortParm = (sort == "BDate" ? "BDate_desc" : "BDate");
 
-            return View(await this.GetSorted(sort).ToListAsync());
+            return View(await GetSorted(sort).ToListAsync());
         }
 
         [HttpGet]
@@ -160,7 +152,7 @@ namespace Congratulator.Controllers
             ViewBag.SurnameSortParm = (sort == "Surname" ? "Surname_desc" : "Surname");
             ViewBag.BDateSortParm = (sort == "BDate" ? "BDate_desc" : "BDate");
 
-            return View(await this.GetNear(sort).ToListAsync());
+            return View(await GetNear(sort).ToListAsync());
         }
 
         private IQueryable<Models.UserDbModel> GetNear(string sort)

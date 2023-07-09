@@ -14,26 +14,19 @@ namespace Congratulator.Controllers
             this.context = context;
         }
 
-        [HttpGet]
-        public JsonResult Get()
-        {
-            return Json(from user in this.context.Users select user);
-        }
-
         [HttpGet("{id}", Name = "GetUser")]
         public IActionResult Get(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
                 return NotFound();
 
-            var user = this.context.Users.SingleOrDefault(t => t.Id == id);
+            var user = context.Users.SingleOrDefault(t => t.Id == id);
 
             if (user == null)
                 return NotFound();
 
             return Json(user);
         }
-
 
         [HttpPost]
         public IActionResult Post([FromBody] Models.User newUser)
@@ -43,12 +36,11 @@ namespace Congratulator.Controllers
 
             var user = new Models.UserDbModel(newUser);
 
-            this.context.Add(user);
-            this.context.SaveChanges();
+            context.Add(user);
+            context.SaveChanges();
 
             return CreatedAtRoute("GetUser", new { id = user.Id }, user);
         }
-
 
         [HttpPut("{id}")]
         public IActionResult Put(string id, [FromBody] Models.User updatedUser)
@@ -56,19 +48,18 @@ namespace Congratulator.Controllers
             if (string.IsNullOrWhiteSpace(id))
                 return NotFound();
 
-            var user = this.context.Users.SingleOrDefault(t => t.Id == id);
+            var user = context.Users.SingleOrDefault(t => t.Id == id);
 
             if (user == null)
                 return NotFound();
 
             user.Update(updatedUser);
 
-            this.context.Update(user);
-            this.context.SaveChanges();
+            context.Update(user);
+            context.SaveChanges();
 
             return Ok();
         }
-
 
         [HttpDelete("{id}")]
         public IActionResult Delete(string id)
@@ -76,13 +67,13 @@ namespace Congratulator.Controllers
             if (string.IsNullOrWhiteSpace(id))
                 return NotFound();
 
-            var user = this.context.Users.SingleOrDefault(t => t.Id == id);
+            var user = context.Users.SingleOrDefault(t => t.Id == id);
 
             if (user == null)
                 return NotFound();
 
-            this.context.Users.Remove(user);
-            this.context.SaveChanges();
+            context.Users.Remove(user);
+            context.SaveChanges();
 
             return Ok();
         }
